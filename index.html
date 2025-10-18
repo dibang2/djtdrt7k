@@ -13,6 +13,7 @@
 </head>
 <body>
   <h1>上传数据（每行一个）</h1>
+  <div style="margin-bottom:12px">API 地址： <span id="apiBase">/api</span></div>
   <div class="box">
     <textarea id="dataLines" placeholder="每行一个数据"></textarea>
     <button id="uploadData">上传数据</button>
@@ -35,7 +36,9 @@
 
   <script>
     async function postJson(path, body){
-      const res = await fetch(path, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+      // if path is relative and doesn't start with /api, prefix with /api
+      const finalPath = path.startsWith('/') ? path : ('/api/' + path);
+      const res = await fetch(finalPath, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
       return res.json();
     }
 
@@ -47,10 +50,10 @@
     });
 
     document.getElementById('uploadAccount').addEventListener('click', async ()=>{
-      const account = document.getElementById('accountInput').value.trim();
-      if(!account){alert('请输入账号');return}
-      const r = await postJson('/upload_account', {account});
-      document.getElementById('accountResult').innerText = '密钥: ' + r.key;
+    let account = document.getElementById('accountInput').value.trim();
+    // Allow empty account; server will auto-generate
+    const r = await postJson('/api/upload_account', {account});
+    document.getElementById('accountResult').innerText = '密钥: ' + r.key + '\n对应账号: ' + (r.account || account || '自动生成');
     });
 
     document.getElementById('getAccount').addEventListener('click', async ()=>{

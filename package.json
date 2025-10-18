@@ -6,11 +6,9 @@
     "start": "vercel dev"
   },
   "engines": {
-    "node": "22.x"
+    "node": "16.x"
   },
   "dependencies": {}
 }
-
-
 
 
